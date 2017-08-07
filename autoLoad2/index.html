@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <ul id="list">
+    </ul>
+    <div class="button-wrapper"><button class="button">更多内容</button></div>
+</body>
+<script>
+    for (var i = 0; i < 9; i++) {
+        let li = `
+        <li><div></div><p>这是第${i + 1}段内容</p></li>
+       `
+        list.insertAdjacentHTML('beforeend', li)
+    }
+    let button = document.querySelector('.button')
+    let n = 1
+    button.onclick = function () {
+        let request = new XMLHttpRequest()
+        request.open('GET', `./page-${n}.html`)
+        request.onload = function () {
+            n++
+            let response = request.responseText
+            let date = window.JSON.parse(response)
+            for (var i = 0; i < date.content.length; i++) {
+                let liList = `
+                <li><div></div><p>${date.content[i].p}</p></li>
+               `
+                list.insertAdjacentHTML('beforeend', liList)
+                if (date.hasNext === false) {
+                    button.disabled = true
+                }
+            }
+        }
+        request.send()
+    }
+    window.onscroll = function () {
+        // let viewHeight = window.innerHeight
+        let viewHeight = document.documentElement.clientHeight
+        let buttonTop = button.getBoundingClientRect().top
+        console.log(buttonTop)
+        if(viewHeight > buttonTop + 60){
+            button.click()
+        }
+    }
+
+</script>
+
+</html>

@@ -94,16 +94,16 @@
                 `
                 load.insertAdjacentHTML('beforeend', liString)
             }
+            if (date.hasnext === false) {
+                button.disabled = true
+            }
         }
         request.send()
-        if (date.hasnext === false) {
-            button.disabled = true
-        }
     }
     window.onscroll = function () {
         let buttonTop = button.getBoundingClientRect().top
         let viewHeight = document.documentElement.clientHeight
-        if (viewHeight > buttonTop) {
+        if (viewHeight > buttonTop + 50) {
             button.click()
         }
     }
