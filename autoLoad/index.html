@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<style>
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    ul,
+    ol {
+        list-style: none;
+    }
+
+    #load {
+        max-width: 680px;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 auto;
+        justify-content: space-between;
+    }
+
+    #load>li {
+        width: calc(33.3333% - 10px);
+    }
+
+    #load>li img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    #load>li>div {
+        padding-top: 100%;
+        position: relative;
+    }
+
+    div.button-wrapper {
+        text-align: center;
+        margin: 10px auto;
+    }
+</style>
+
+<body>
+    <ul id="load">
+
+    </ul>
+    <div class="button-wrapper">
+        <button class="button">
+            更多内容
+        </button>
+    </div>
+</body>
+<script>
+    let load = document.querySelector('#load')
+    for (let i = 0; i < 9; i++) {
+        let li = document.createElement('li')
+        load.appendChild(li)
+        let img = document.createElement('img')
+        img.width = 200
+        img.height = 200
+        img.src = '//via.placeholder.com/200x200?text=' + Math.random().toFixed(6)
+        let divimg = document.createElement('div')
+        divimg.appendChild(img)
+        li.appendChild(divimg)
+        let p = document.createElement('p')
+        p.textContent = `这是第${i + 1}段话`
+        li.appendChild(p)
+    }
+    let button = document.querySelector('.button')
+    let n = 0
+    button.onclick = function () {
+        let request = new XMLHttpRequest()
+        request.open('GET', `./page-${n + 1}.html`)
+        request.onload = function () {
+            n += 1
+            let response = request.responseText
+            let date = JSON.parse(response)
+            for (var j = 0; j < date.content.length; j++) {
+                let liString = `
+                  <li><div><img src='${date.content[j].imgsrc}'></div><p>${date.content[j].text}</p></li>
+                `
+                load.insertAdjacentHTML('beforeend', liString)
+            }
+        }
+        request.send()
+        if (date.hasnext === false) {
+            button.disabled = true
+        }
+    }
+    window.onscroll = function () {
+        let buttonTop = button.getBoundingClientRect().top
+        let viewHeight = document.documentElement.clientHeight
+        if (viewHeight > buttonTop) {
+            button.click()
+        }
+    }
+
+</script>
+
+</html>
