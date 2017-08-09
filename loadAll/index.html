@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="prefetch" href="https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif">
+</head>
+<style>
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    ul,
+    ol {
+        list-style: none;
+    }
+
+    #load {
+        max-width: 680px;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 auto;
+        justify-content: space-between;
+    }
+
+    #load>li {
+        width: calc(33.3333% - 10px);
+    }
+
+    #load>li img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    #load>li>div {
+        padding-top: 100%;
+        position: relative;
+    }
+
+    div.button-wrapper {
+        text-align: center;
+        margin: 10px auto;
+    }
+</style>
+
+<body>
+    <ul id="load">
+
+    </ul>
+    <div class="button-wrapper">
+        <button class="button">
+            更多内容
+        </button>
+    </div>
+</body>
+<script>
+    // let preLoading = new Image()
+    // preLoading.src = 'https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif' 
+    let load = document.querySelector('#load')
+    for (let i = 0; i < 9; i++) {
+        let li = document.createElement('li')
+        load.appendChild(li)
+        let img = document.createElement('img')
+        img.width = 200
+        img.height = 200
+        img.src = '//via.placeholder.com/200x200?text=' + Math.random().toFixed(6)
+        let divimg = document.createElement('div')
+        divimg.appendChild(img)
+        li.appendChild(divimg)
+        let p = document.createElement('p')
+        p.textContent = `这是第${i + 1}段话`
+        li.appendChild(p)
+    }
+    let button = document.querySelector('.button')
+    let n = 0
+    
+    let hasNext = true
+    let loadingImage = false
+    button.onclick = loadMore
+     function loadMore() {
+         if(! hasNext){return }
+         if(loadingImage){return}
+        let request = new XMLHttpRequest()
+        request.open('GET', `./page-${n + 1}.html`)
+        request.onerror = function(){loadingImage = false}
+        request.onload = function () {
+            loadingImage = false
+            n += 1
+            let response = request.responseText
+            let date = JSON.parse(response)
+            for (var j = 0; j < date.content.length; j++) {
+                let random = Math.random().toFixed(6)
+                let liString = `
+                  <li><div><img src="https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif" data-src='${date.content[j].imgsrc}?text=${random}'></div><p>${date.content[j].text}</p></li>
+                `
+                load.insertAdjacentHTML('beforeend', liString)
+            }
+            if (date.hasnext === false) {
+                hasNext = false
+                button.disabled = true
+            }
+        }
+        loadingImage = true
+        request.send()
+    }
+    window.onscroll = function () {
+        if(toUp(button)){
+            loadMore()
+        }
+        let images = document.querySelectorAll('img[data-src]')
+        for(let i=0;i<images.length;i++){
+           if( toUp(images[i])){
+               images[i].src = images[i].getAttribute('data-src')
+           }
+        }
+    }
+    function toUp(element) {
+        let buttonTop = element.getBoundingClientRect().top
+        let viewHeight = document.documentElement.clientHeight
+        if (viewHeight > buttonTop + 50) {
+            return true
+        }else{
+            return false
+        }
+
+    }
+
+</script>
+
+</html>
