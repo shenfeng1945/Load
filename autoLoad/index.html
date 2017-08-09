@@ -89,8 +89,9 @@
             let response = request.responseText
             let date = JSON.parse(response)
             for (var j = 0; j < date.content.length; j++) {
+                let random = Math.random().toFixed(6)
                 let liString = `
-                  <li><div><img src='${date.content[j].imgsrc}'></div><p>${date.content[j].text}</p></li>
+                  <li><div><img src='${date.content[j].imgsrc}?text=${random}'></div><p>${date.content[j].text}</p></li>
                 `
                 load.insertAdjacentHTML('beforeend', liString)
             }
