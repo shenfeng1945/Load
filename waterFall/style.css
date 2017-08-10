@@ -1,0 +1,49 @@
+*{margin:0;padding:0;box-sizing:border-box;}
+.container{
+    position:relative;
+    margin:0 auto;
+    outline:1px solid red;
+}
+.clearfix::after{
+    content:'';
+    display: block;
+    clear:both;
+}
+.container .box{
+    padding:15px 0 0 15px;
+    float:left;
+    /* outline:1px solid red; */
+}
+.container .box .picture{
+    padding:10px;
+    border:1px solid black;
+    border-radius:5px;
+    box-shadow:0 0 5px #aaa;
+}
+.container .box .picture img{
+    width:200px;
+    height:auto;
+}
+/*按钮*/
+.button-wrapper{
+    text-align:center;
+    margin:20px 0;
+}
+#button {
+  background: #3498db;
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  border:none;
+}
+
+#button:hover {
+  background: #3cb0fd;
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+}
+.position{}
