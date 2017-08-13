@@ -1,17 +1,20 @@
 let container = document.querySelector('.container')
+var hasNext = true
+var loadingImg = false
+let n = 1
 window.onload = function () {
     waterFall()
     button.onclick = loadMore
-    window.onscroll = function (){
+    window.onscroll = function () {
         let images = document.querySelectorAll('img[data-src]')
-        if(toUp(button)){
-           loadMore() 
-           waterFall()
+        if (toUp(button)) {
+            loadMore()
+            waterFall()
         }
-        for(var j=0;j<images.length;j++){
-            if(toUp(images[j])){
+        for (var j = 0; j < images.length; j++) {
+            if (toUp(images[j])) {
                 images[j].src = images[j].getAttribute('data-src')
-                imamge[j].removeAttribute('data-src')
+                images[j].removeAttribute('data-src')
             }
         }
     }
@@ -30,26 +33,30 @@ function getByClass(className) {
 }
 //取一个数组中最小值的索引
 function getMinIndex(array, value) {
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
         if (array[i] === value) {
             return i
         }
     }
 }
 
-// let n = 1
 function loadMore() {
+    console.log(hasNext === false)
+    if (! hasNext) {return }
+    if(loadingImg){return}
     var request = new XMLHttpRequest()
-    request.open('GET', `./page.html`)
+    request.open('GET', `./page${n}.html`)
+    request.onerror = function(){loadingImg = false}
     request.onload = function () {
-        // n += 1
+        loadingImg = false
+        n += 1
         let response = request.responseText
         let data = window.JSON.parse(response)
         for (let i = 0; i < data.src.length; i++) {
-                let imgDiv = `
-            <div class="box"><div class="picture"><img data-src='${data.src[i].url}'></div></div>
+            let imgDiv = `
+            <div class="box"><div class="picture"><img src="about:blank" data-src='${data.src[i].url}'></div></div>
             `
-                container.insertAdjacentHTML('beforeend', imgDiv)
+            container.insertAdjacentHTML('beforeend', imgDiv)
             // let divBox = document.createElement('div')
             // divBox.className = 'box'
             // let divPic = document.createElement('div')
@@ -61,7 +68,13 @@ function loadMore() {
             // divPic.appendChild(img)
             waterFall()
         }
+        console.log(data)
+        if (data.hasNext === false) {
+            haxNext = false
+            button.disabled = true
+        }
     }
+    loadingImg = true
     request.send()
 }
 function waterFall() {
@@ -89,8 +102,8 @@ function waterFall() {
     }
     container.style.height = Math.max.apply(null, hCols) + 'px'
 }
-function toUp(element){
+function toUp(element) {
     let viewPortTop = document.documentElement.clientHeight
     let buttonTop = element.getBoundingClientRect().top
-    return (buttonTop < viewPortTop - 50)?true:false
+    return (buttonTop < viewPortTop - 50) ? true : false
 }
