@@ -1,5 +1,5 @@
 let container = document.querySelector('.container')
-var hasNext = true
+let hasNext = true
 var loadingImg = false
 let n = 1
 window.onload = function () {
@@ -15,12 +15,10 @@ window.onload = function () {
             if (toUp(images[j])) {
                 images[j].src = images[j].getAttribute('data-src')
                 images[j].removeAttribute('data-src')
+                waterFall()
             }
         }
     }
-
-
-
 }
 //根据class获取元素
 function getByClass(className) {
@@ -41,8 +39,7 @@ function getMinIndex(array, value) {
 }
 
 function loadMore() {
-    console.log(hasNext === false)
-    if (! hasNext) {return }
+    // if (! hasNext) {return }
     if(loadingImg){return}
     var request = new XMLHttpRequest()
     request.open('GET', `./page${n}.html`)
@@ -68,12 +65,13 @@ function loadMore() {
             // divPic.appendChild(img)
             waterFall()
         }
-        console.log(data)
         if (data.hasNext === false) {
-            haxNext = false
-            button.disabled = true
+            haxNext = false 
         }
     }
+    if(n>3){
+        button.style.display = 'none'
+        return}
     loadingImg = true
     request.send()
 }
@@ -105,5 +103,5 @@ function waterFall() {
 function toUp(element) {
     let viewPortTop = document.documentElement.clientHeight
     let buttonTop = element.getBoundingClientRect().top
-    return (buttonTop < viewPortTop - 50) ? true : false
+    return (buttonTop < viewPortTop) ? true : false
 }
