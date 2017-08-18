@@ -1,7 +1,7 @@
 let container = document.querySelector('.container')
-let hasNext = true
+var hasNext = true
 var loadingImg = false
-let n = 1
+let n = 0
 window.onload = function () {
     waterFall()
     button.onclick = loadMore
@@ -39,39 +39,42 @@ function getMinIndex(array, value) {
 }
 
 function loadMore() {
-    // if (! hasNext) {return }
-    if(loadingImg){return}
+    if (! hasNext) { return }
+    if (loadingImg) { return }
     var request = new XMLHttpRequest()
-    request.open('GET', `./page${n}.html`)
-    request.onerror = function(){loadingImg = false}
-    request.onload = function () {
-        loadingImg = false
-        n += 1
-        let response = request.responseText
-        let data = window.JSON.parse(response)
-        for (let i = 0; i < data.src.length; i++) {
-            let imgDiv = `
+    request.open('GET', `./page${n+1}.html`)
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+            if (request.status >= 200 && request.status < 400) {
+                loadingImg = false
+                n += 1
+                let response = request.responseText
+                let data = window.JSON.parse(response)
+                for (let i = 0; i < data.src.length; i++) {
+                    let imgDiv = `
             <div class="box"><div class="picture"><img src="about:blank" data-src='${data.src[i].url}'></div></div>
             `
-            container.insertAdjacentHTML('beforeend', imgDiv)
-            // let divBox = document.createElement('div')
-            // divBox.className = 'box'
-            // let divPic = document.createElement('div')
-            // divPic.className = 'picture'
-            // let img = document.createElement('img')
-            // img.src = data.src[i].url
-            // container.appendChild(divBox)
-            // divBox.appendChild(divPic)
-            // divPic.appendChild(img)
-            waterFall()
-        }
-        if (data.hasNext === false) {
-            haxNext = false 
+                    container.insertAdjacentHTML('beforeend', imgDiv)
+                    // let divBox = document.createElement('div')
+                    // divBox.className = 'box'
+                    // let divPic = document.createElement('div')
+                    // divPic.className = 'picture'
+                    // let img = document.createElement('img')
+                    // img.src = data.src[i].url
+                    // container.appendChild(divBox)
+                    // divBox.appendChild(divPic)
+                    // divPic.appendChild(img)
+                    waterFall()
+                }
+                // console.log(data.hasNext === false)
+                if (data.hasNext === false) {
+                    hasNext = false
+                }
+            }
+        } else if (request.status >= 400) {
+            loadingImg = false
         }
     }
-    if(n>3){
-        button.style.display = 'none'
-        return}
     loadingImg = true
     request.send()
 }
